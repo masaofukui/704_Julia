@@ -33,7 +33,7 @@ function compute_Kgrowth(param,omega,piz)
 end
 
 function compute_omega_next(param,omega,piz,Kgrowth)
-    @unpack ztran = param
+    @unpack ztran, beta = param
     saving_from_z = (beta.*(1 .+ piz).*omega)
     omega_next = 1/Kgrowth.* ( ztran'*saving_from_z )
     return omega_next
