@@ -1,4 +1,33 @@
 
+function ss_comparative_statics(param, lambda_vec; T = 10000, omega_in = nothing )
+    @unpack Nz = param
+    Z_vec = zeros(length(lambda_vec))
+    omega_vec = zeros(Nz,length(lambda_vec))
+    r_vec = zeros(length(lambda_vec))
+
+
+
+    for (i_lambda,lambda) in enumerate(lambda_vec)
+        if isnothing(omega_in)
+            omega_init = ones(Nz)/Nz
+        else
+            omega_init = copy(omega_in)
+        end
+        lambda_path = lambda*ones(T);
+        eqm_result = solve_eqm_path(param,omega_init,lambda_path, T)
+        Z_vec[i_lambda] = eqm_result.Z_path[end]
+        omega_vec[:,i_lambda] = eqm_result.omega_path[:,end]
+        r_vec[i_lambda] = eqm_result.r_path[end]
+    end
+
+    return (
+        Z_vec = Z_vec,
+        omega_vec = omega_vec,
+        r_vec = r_vec
+    )
+end
+
+
 function solve_eqm_path(param,omega_init,lambda_path, T)
     @assert length(lambda_path) == T
     @unpack Nz,tol = param
@@ -10,7 +39,7 @@ function solve_eqm_path(param,omega_init,lambda_path, T)
     Z_path = zeros(T)
     Kgrowth_path = zeros(T)
 
-    Tend = []
+    Tend = T;
     for t = 1:T
         omega = omega_path[:,t];
         lambda = lambda_path[t];
@@ -24,18 +53,24 @@ function solve_eqm_path(param,omega_init,lambda_path, T)
         r_index_path[t] = r_index;
         Z_path[t] = Z;
         Kgrowth_path[t] = Kgrowth;
-        if t < T
-            omega_path[:,t+1] = omega_next;
-            omega_diff = maximum(abs.(omega_path[:,t+1] .- omega_path[:,t]));
-            println("t = $t, omega_diff = $omega_diff")
-            if omega_diff < tol
+        if t > 1
+            Z_diff = abs(Z_path[t] - Z_path[t-1])
+            if t % 100 == 0
+                println("t = $t, Z_diff = $Z_diff")
+            end
+            if Z_diff < tol
                 println("Steady state reached at t = $t")
                 Tend = copy(t);
                 break
-            else
-                Tend = copy(T);
             end
+        end
+        if t < T
+            omega_path[:,t+1] = omega_next;
         end        
+    end
+
+    if Tend < T 
+        println("Steady state not reached")
     end
 
     return (

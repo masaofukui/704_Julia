@@ -4,8 +4,10 @@ function solve_for_r(param,omega,lambda)
    
     integrate_omega_from_above = reverse(cumsum(reverse(omega)))
     capital_market_clearing = lambda .* integrate_omega_from_above .- 1
-    r_index = findfirst(capital_market_clearing .< 0)
-
+    r_index = findlast(capital_market_clearing .> 0)
+    if isnothing(r_index)
+        r_index = 1
+    end
     r = zg[r_index]
 
     return r,r_index
