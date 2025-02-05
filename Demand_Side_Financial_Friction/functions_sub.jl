@@ -6,7 +6,7 @@ end
 
 function uprime_inv_fun(param,uprime)
     @unpack gamma = param        
-    return uprime.^(-1/gamma)
+    return uprime.^(- 1 ./gamma)
 end
 
 function compute_index_ia_iy(param,ia,iy)
@@ -29,6 +29,8 @@ function compute_closes_grid_and_distance(param,a_next)
     # compute as a share of the distance to the closest grid point
     if indices_above == 1
         share_distance = 1.0;
+    elseif indices_above == length(ag) && a_next >= ag[length(ag)]
+        share_distance = 0.0;
     else
         share_distance = distances ./ (ag[indices_above] - ag[indices_above-1])
     end

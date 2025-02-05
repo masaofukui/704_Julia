@@ -10,13 +10,15 @@ function solve_ss_distribution(param,Bellman_result)
     RHS = zeros(Na*Ny)
     RHS[end] = 1.0;
     ss_distribution = Matrix_to_invert\RHS
+    @assert sum(ss_distribution) ≈ 1.0
+    ss_distribution = reshape(ss_distribution,Na,Ny)
     return ss_distribution
 end
 
 
 function construct_transition_matrix(param, a_pol)
     @unpack Na, Ny, yg, ytran = param
-    transition_matrix = zeros(Na*Ny,Na*Ny)
+    transition_matrix = zeros(eltype(a_pol),Na*Ny,Na*Ny)
 
     for ia = 1:Na
         for iy = 1:Ny
@@ -34,5 +36,7 @@ function construct_transition_matrix(param, a_pol)
         end
     end
     transition_matrix = sparse(transition_matrix)
+    @assert sum(transition_matrix,dims=2) ≈ ones(Ny*Na)
+
     return transition_matrix
 end
