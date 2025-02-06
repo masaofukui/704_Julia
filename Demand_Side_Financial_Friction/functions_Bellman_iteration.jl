@@ -64,8 +64,15 @@ function Euler_iteration_once_derivative(param, c_pol_old, beta, r)
     return dc_dr, da_dr
 end
 
-function test_derivative(x)
-    y = x*(1:10)
-    a = LinearInterpolation(1:10,y)
-    return a(x)
+function wrapper_PE_policy_plot(param,beta,r; fig_save = 0, fig_name = "")
+    if beta*(1+r) >= 1
+        println("beta*(1+r) >= 1")
+    end
+    @assert param.amin > - minimum(param.yg)./r || r <= 0
+    Bellman_result = solve_policy_EGM(param, beta, r)
+    p_pol = plot_policy_functions(param, Bellman_result;a_idx=1:50)
+    if fig_save == 1
+        savefig(p_pol, "./figure/policy_functions_"*fig_name*".pdf")
+    end
+    return p_pol
 end

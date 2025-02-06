@@ -11,7 +11,8 @@ include("functions_sub.jl")
 include("functions_Bellman_iteration.jl")
 include("functions_distribution_iteration.jl") 
 include("functions_ssj.jl")
-
+include("functions_plot.jl")
+include("functions_simulation.jl")
 fig_save = 1
 
 function set_parameters(;beta = nothing, amin = -2)
@@ -33,7 +34,7 @@ function set_parameters(;beta = nothing, amin = -2)
 
     # grid for assets
     amin = -2;
-    amax = 20;
+    amax = 5;
     ag = range(amin,amax,length=Na);
 
     # risk aversion for utility function
@@ -59,26 +60,22 @@ end
 param = set_parameters()
 
 
-beta = 0.98
+fig_save = 1
+
+beta = 0.97
 r = 0.02;
-@assert beta*(1+r) < 1
-@assert param.amin > - minimum(param.yg)./r
+
+fig_name = "beta_"*string(beta)*"_r_"*string(r);
+wrapper_PE_policy_plot(param,beta,r,fig_name = fig_name,fig_save = fig_save)
 Bellman_result = solve_policy_EGM(param, beta, r)
+
+plt_all = run_simulation(param, Bellman_result; seed_num = 1231,fig_save = fig_save)
+
 ss_distribution = solve_ss_distribution(param,Bellman_result)
 
-@unpack ag,amin = param
-@unpack c_pol, a_pol = Bellman_result
 
-# Set the default font to Computer Modern
-default(fontfamily="Computer Modern")
 
-a_idx = 1:40
-p1 = plot(ag[a_idx], c_pol[a_idx,[2,1]], 
-    lw=5,
-    label=["high income" "low income" ],
-    linestyle=[:solid :dash])
-title!(L"Consumption Policy Functions, $c(a,y)$")
-xlabel!(L"Asset, $a$")
+
 
 #plot wealth distribution 
 p2 = plot(ag, sum(ss_distribution, dims =2), 
