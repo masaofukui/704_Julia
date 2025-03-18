@@ -1,1 +1,10 @@
-# 704_Julia
+# EC 741 Codes (Boston University)
+
+This repository has codes for the second part of EC704, a part of the first-year macro sequence at Boston University, as taught in spring 2025.
+
+The course covers labor market and financial market frictions.
+* Topic 1: Unemployment facts.
+  * [lecture1.do](./Topic1/lecture1.do): Top-level code to produce all the figures in lecture note 1.
+  * [time_aggreation.R](./Topic1/time_aggregation.R): This needs to be run before line 383 of the above file.
+  * The underlying data is too large to be uploaded on github. You can download the data from [here](https://www.dropbox.com/scl/fo/aofw98nppaey0pjoi1aql/AL0pFltslJinYj_tKfWq4IY?rlkey=a9v0i1ugkf30ik5zyiiam77eb&dl=1). Save the folder as "./Topic1/oriignal_data"
+
