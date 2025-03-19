@@ -1,4 +1,4 @@
-# EC 741 Codes (Boston University)
+# EC 704 Codes (Boston University)
 
 This repository has codes for the second part of EC704, a part of the first-year macro sequence at Boston University, as taught in spring 2025.
 
