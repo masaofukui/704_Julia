@@ -8,3 +8,7 @@ The course covers labor market and financial market frictions.
   * [time_aggreation.R](./Topic1/time_aggregation.R): This needs to be run before line 383 of the above file.
   * The underlying data is too large to be uploaded on github. You can download the data from [here](https://www.dropbox.com/scl/fo/aofw98nppaey0pjoi1aql/AL0pFltslJinYj_tKfWq4IY?rlkey=a9v0i1ugkf30ik5zyiiam77eb&dl=1). Save the folder as "./Topic1/oriignal_data"
 
+* Topic 7: Canonical Incomplete Market Models (co-written with Aruzhan Nurlankul)
+  * [Toplevel.jl](./Topic7/Toplevel.jl): Top-level code to solve the steady state and the transition dynamics of Bewley-Hugget-Aiyagari model. Transition dynamics is obtained by sequence space Jacobian method by [Auclret, Bardóczy, Rognlie and Straub (2021)](https://web.stanford.edu/~aauclert/sequence_space_jacobian.pdf).
+
+
