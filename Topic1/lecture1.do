@@ -4,11 +4,15 @@ clear
 import fred CIVPART LNS11300002 LNS11300001 LNS11300060 LRAC25MAUSM156S LRAC25FEUSM156S
 global lwset = 0.8
 
+forval yr = 1950(10)2020{
+  local yy = mdy(1,1,`yr')
+  local yrlabel `yrlabel' `yy'
+}
 
 tw ( line LNS11300001  daten , lw(${lwset}) ) ///
  ( line CIVPART daten , lw(${lwset}) lc(forest_green) ) ///
   ( line LNS11300002 daten ,  lw(${lwset})lc(maroon) ),  ///
-  xlabel(,format(%tdCCYY)) ///
+  xlabel(`yrlabel',format(%tdCCYY)) ///
   graphregion(color(white)) xtitle("") ytitle("%") ///
   legend(order(2 "Total" 1 "Male" 3 "Female") rows(1) position(6)) ///
    title("Labor Force Participation Rate") xsize(9) ysize(5) xlab(,nogrid)
@@ -22,25 +26,33 @@ tsset ym
 
 *nbercycles CIVPART if tin(1980m1,2023m2) , file(lfp.do) replace
 
+
+forval yr = 1980(10)2020{
+  local yy = ym(`yr',1)
+  local yrlabel `yrlabel' `yy'
+}
 local yms = ym(1980,1)
-local yme = ym(2023,2)
 twoway function y=67.9730030822754,range(240 246) recast(area) color(gs14) base(59.49899848937987) || /// 
 function y=67.9730030822754,range(258 274) recast(area) color(gs14) base(59.49899848937987) || /// 
 function y=67.9730030822754,range(366 374) recast(area) color(gs14) base(59.49899848937987) || /// 
 function y=67.9730030822754,range(494 502) recast(area) color(gs14) base(59.49899848937987) || /// 
 function y=67.9730030822754,range(575 593) recast(area) color(gs14) base(59.49899848937987) || /// 
 function y=67.9730030822754,range(721 723) recast(area) color(gs14) base(59.49899848937987) || /// 
-(line CIVPART ym , lw(${lwset}) lc(navy)) if inrange(ym,`yms',`yme') , xlabel(`yms'(60)`yme',format(%tm)) ///
+(line CIVPART ym , lw(${lwset}) lc(navy)) if ym >=`yms' ,  ///
  legend(order(7 1 "Recession")) graphregion(color(white)) legend(off) ytitle("%") title("Labor Force Participation Rate") ///
- xsize(10) ysize(6)
+ xsize(10) ysize(6) xlabel(`yrlabel',format(%tmCCYY))
  graph export ./figure/lfp_total.pdf,replace
 
 
+forval yr = 1950(10)2020{
+  local yy = mdy(1,1,`yr')
+  local yrlabel `yrlabel' `yy'
+}
 
 tw ( line LRAC25MAUSM156S  daten , lw(${lwset}) ) ///
  ( line LNS11300060 daten , lw(${lwset}) lc(forest_green) ) ///
   ( line LRAC25FEUSM156S daten ,  lw(${lwset})lc(maroon) ),  ///
-  xlabel(,format(%tdCCYY)) ///
+  xlabel(`yrlabel',format(%tdCCYY)) ///
   graphregion(color(white)) xtitle("") ytitle("%") ///
   legend(order(2 "Total" 1 "Male" 3 "Female") rows(1)) title("Labor Force Participation Rate: 25-54 yrs old") xsize(9) ysize(5) ///
   ylabel(20(20)100) ///
@@ -141,10 +153,14 @@ sort ym
 replace USRECM = 26*USRECM
 
 
+forval yr = 1930(10)2020{
+  local yy = ym(`yr',1)
+  local yrlabel `yrlabel' `yy'
+}
 tw (area USRECM ym,color(gs14))  ///
 (line unrate ym, lc(navy) lw(0.7)), ///
 yscale(range(0,26)) graphregion(color(white)) ///
-xlabel(,format(%tmCCYY)) xtitle("") ///
+xlabel(`yrlabel',format(%tmCCYY)) xtitle("") ///
 legend(order(1 "NBER recession" 2 "Unemployment rate") position(6) rows(1)) ///
 title("Unemployment Rate") ytitle("%") ///
 xsize(12) ysize(6) note("Data: NBER Macro History Database and CPS")
@@ -153,9 +169,14 @@ graph export ./figure/unrate.pdf,replace
 import fred LNS14000001 LNS14000002,clear
 
 
+
+forval yr = 1950(10)2020{
+  local yy = mdy(1,1,`yr')
+  local yrlabel `yrlabel' `yy'
+}
 tw  ( line LNS14000001 daten , lw(${lwset}) lc(navy) ) ///
   ( line LNS14000002 daten ,  lw(${lwset})lc(maroon) lp(dash) ),  ///
-  xlabel(,format(%tdCCYY)) ///
+  xlabel(`yrlabel',format(%tdCCYY)) ///
   graphregion(color(white)) xtitle("") ytitle("%") ///
   legend(order(1 "Male" 2 "Female") rows(1)) title("Unemployment Rate by Gender") xsize(9) ysize(5) ///
   legend(position(6)) xlab(,nogrid)
@@ -579,10 +600,16 @@ nbercycles JTSJOL, file(vacancy.do)
 
 reg lf lvu
 
+
+forval yr = 2000(5)2025{
+  local yy = ym(`yr',1)
+  local yrlabel `yrlabel' `yy'
+}
+
 tw function y=11.97354953765869,range(494 502) recast(area) color(gs14) base(2.209680111408233) || /// 
 function y=11.97354953765869,range(575 593) recast(area) color(gs14) base(2.209680111408233) || /// 
 function y=11.97354953765869,range(721 723) recast(area) color(gs14) base(2.209680111408233) || /// 
-( line JTSJOL ym, lc(maroon) lw(0.5))  if JTSJOL != .,xlabel(`yms'(60)`ymd',format(%tmCCYY)) ///
+( line JTSJOL ym, lc(maroon) lw(0.5))  if JTSJOL != .,xlabel(`yrlabel',format(%tmCCYY)) ///
 graphregion(color(white)) ytitle("Job Openings (Millions)") xtitle("") legend(off)
 graph export ./figure/vacancy.pdf, replace
 
@@ -618,7 +645,7 @@ tw ( scatter vrate UNRATE  if ym <= ym(2009,12), ms(oh) ) ///
   ( scatter vrate UNRATE  if inrange(ym,ym(2020,1),ym(2022,12)), ms(sh) ) ///
     ( scatter vrate UNRATE  if ym > ym(2022,12), ms(x) msize(3) ) ///
 , graphregion(color(white)) ytitle("Vacancy rate (%)") xtitle("Unemployment rate (%)") ///
-legend(order(1 "2000-2009" 2 "2010-2019" 3 "2020-2022" 4 "2022-2023") rows(1)) xlabel(5(5)15) ylabel(5(5)20)  ///
+legend(order(1 "2000-2009" 2 "2010-2019" 3 "2020-2022" 4 "2022-2025") rows(1)) xlabel(5(5)15) ylabel(5(5)20)  ///
  xsize(10) ysize(6) yscale(range(3.5 20)) ///
   legend(position(6)) xlab(,nogrid)
 graph export ./figure/uv4.pdf, replace
