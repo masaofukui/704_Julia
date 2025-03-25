@@ -645,7 +645,7 @@ tw ( scatter vrate UNRATE  if ym <= ym(2009,12), ms(oh) ) ///
   ( scatter vrate UNRATE  if inrange(ym,ym(2020,1),ym(2022,12)), ms(sh) ) ///
     ( scatter vrate UNRATE  if ym > ym(2022,12), ms(x) msize(3) ) ///
 , graphregion(color(white)) ytitle("Vacancy rate (%)") xtitle("Unemployment rate (%)") ///
-legend(order(1 "2000-2009" 2 "2010-2019" 3 "2020-2022" 4 "2022-2025") rows(1)) xlabel(5(5)15) ylabel(5(5)20)  ///
+legend(order(1 "2000-2009" 2 "2010-2019" 3 "2020-2022" 4 "2023-2025") rows(1)) xlabel(5(5)15) ylabel(5(5)20)  ///
  xsize(10) ysize(6) yscale(range(3.5 20)) ///
   legend(position(6)) xlab(,nogrid)
 graph export ./figure/uv4.pdf, replace
