@@ -130,7 +130,8 @@ function compute_bm(underw)
         plot(wg,hzg)
         hzz = diff(Hzg)./diff(zg)
         hzz[isnan.(hzz)] .= 0.0
-        J_pdf_z = J_pdf.(zg)
+        J_pdf_z = J_pdf.(zg)./(1-J(underw))
+        J_pdf_z[zg .<= underw] .= 0.0
 
         return wg, lzg,Hzg,hzg,Gzg,hzz,zg,J_pdf_z
 end
