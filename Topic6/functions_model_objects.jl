@@ -19,6 +19,13 @@ function compute_piz(param,r,lambda)
     return piz
 end
 
+function compute_kz(param,r,lambda,omega)
+    @unpack zg = param
+    kz = lambda.*omega;
+    kz[zg .< r] .= 0;
+    return kz
+end
+
 function compute_Z(param,omega,r_index)
     @unpack zg = param
     fraction_above_r = sum(omega[r_index:end])
