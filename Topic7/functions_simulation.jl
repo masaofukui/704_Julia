@@ -5,7 +5,7 @@ using LaTeXStrings
 using Plots.PlotMeasures
 function run_simulation(param, Bellman_result; seed_num = 1234, fig_save = 0)
     @unpack c_pol, a_pol = Bellman_result
-    @unpack ytran, ag, yg, Na, Ny = param
+    @unpack ytran, ag, yg, Na, Ny,ag_plot = param
 
     T = 100
     default(fontfamily="Computer Modern")
@@ -22,8 +22,8 @@ function run_simulation(param, Bellman_result; seed_num = 1234, fig_save = 0)
     y_state = 1 # Start in low income state
     
     # Create interpolation objects for policies
-    c_interp = [LinearInterpolation(ag, c_pol[:,iy], extrapolation_bc=Flat()) for iy in 1:Ny]
-    a_interp = [LinearInterpolation(ag, a_pol[:,iy], extrapolation_bc=Flat()) for iy in 1:Ny]
+    c_interp = [LinearInterpolation(ag, c_pol[:,iy], extrapolation_bc=Interpolations.Flat()) for iy in 1:Ny]
+    a_interp = [LinearInterpolation(ag, a_pol[:,iy], extrapolation_bc=Interpolations.Flat()) for iy in 1:Ny]
     
     # Run simulation
     for t in 1:T
@@ -37,6 +37,7 @@ function run_simulation(param, Bellman_result; seed_num = 1234, fig_save = 0)
         # Draw next period's income state
         y_state = rand() < ytran[y_state,1] ? 1 : 2
     end
+    a_sim = a_sim .+ (ag_plot[1] - ag[1])
 
     plt_c = plot(1:T, c_sim, lw=3, label=:none)
     title!("Consumption", fontsize=24)
