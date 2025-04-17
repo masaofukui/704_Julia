@@ -19,12 +19,13 @@ tw scatter lctfp fs_ast if year == 2019, mlabel(countrycode)
 tw ( scatter lcwtfp fs_ast if year == 2019 & fs_ast!=., mlabel(countrycode) mlabposition(0) msymbol(none) ) ///
 	( lfit lcwtfp fs_ast if year == 2019 & fs_ast!=., lw(0.8)), legend(off) name(welfare,replace) ///
 	xtitle("Credit to GDP Ratio in 2019 (%)") ytitle("log TFP in 2019 (USA=0)") xlab(,nogrid) 
-graph export ./figure/credit_gdp_tfp.pdf
+graph export ./figure/credit_gdp_tfp.pdf, replace
 
 tw ( scatter cwtfp D_K if year == 2019 & D_K!=., mlabel(countrycode) mlabposition(0) msymbol(none) ) ///
 	( lfit cwtfp D_K if year == 2019 & D_K!=., lw(0.8)) , ///
 	 legend(off) name(welfare,replace) ///
-	xtitle("Credit to GDP Ratio in 2019 (%)") ytitle("log TFP in 2019 (USA=0)") xlab(,nogrid) ///
+	xtitle("Credit to Capital Ratio in 2019 (%)") ytitle("TFP in 2019 (USA=1)") xlab(,nogrid)
+graph export ./figure/credit_K_tfp.pdf,replace
 
 
 tw ( scatter cwtfp fs_ast if year == 2019 & fs_ast!=., mlabel(countrycode) ) ///

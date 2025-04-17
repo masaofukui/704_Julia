@@ -17,26 +17,24 @@ end
 
 
 function construct_transition_matrix(param, a_pol)
-    @unpack Na, Ny, yg, ytran = param
+    @unpack Na, Ny, yg, ytran,ag = param
     transition_matrix = zeros(eltype(a_pol),Na*Ny,Na*Ny)
-
     for ia = 1:Na
         for iy = 1:Ny
             index_ia_iy = compute_index_ia_iy(param,ia,iy)
             a_next = a_pol[ia,iy]
-            indices_above, share_distance = compute_closes_grid_and_distance(param,a_next)
-            indices_below = max(1,indices_above - 1)
+            left_grid,right_grid,left_weight,right_weight = find_nearest_grid(ag,a_next)
             for iy_next = 1:Ny
-                index_ia_iy_next = compute_index_ia_iy(param,indices_above,iy_next)
-                transition_matrix[index_ia_iy,index_ia_iy_next] += (1 - share_distance)*ytran[iy,iy_next]
+                index_ia_iy_next = compute_index_ia_iy(param,left_grid,iy_next)
+                transition_matrix[index_ia_iy,index_ia_iy_next] += left_weight*ytran[iy,iy_next]
 
-                index_ia_iy_next = compute_index_ia_iy(param,indices_below,iy_next)
-                transition_matrix[index_ia_iy,index_ia_iy_next] += share_distance*ytran[iy,iy_next]
+                index_ia_iy_next = compute_index_ia_iy(param,right_grid,iy_next)
+                transition_matrix[index_ia_iy,index_ia_iy_next] += right_weight*ytran[iy,iy_next]
+
             end
         end
     end
     transition_matrix = sparse(transition_matrix)
     @assert sum(transition_matrix,dims=2) ≈ ones(Ny*Na)
-
     return transition_matrix
 end
