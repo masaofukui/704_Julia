@@ -15,7 +15,7 @@ end
 
 function compute_piz(param,r,lambda)
     @unpack zg = param
-    piz = max.(zg .- r,0).*(lambda-1) .+ r
+    piz = max.(zg .- r,0).*(lambda) .+ r
     return piz
 end
 

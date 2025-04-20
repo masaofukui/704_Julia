@@ -14,6 +14,7 @@ using Plots.PlotMeasures
 using Distributions
 using QuadGK
 using ForwardDiff
+using QuantEcon
 lw = 3;
 default(; titlefontfamily = "Computer Modern",
     xguidefontfamily = "Computer Modern",
@@ -24,8 +25,6 @@ default(; titlefontfamily = "Computer Modern",
     legendfontsize = 12,
     yguidefontsize = 12,
     xgrid = :none)
-
-
 
 function compute_homo_bm(fE)
         underw = 0.4;

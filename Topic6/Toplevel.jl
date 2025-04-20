@@ -13,11 +13,11 @@ function set_parameters()
     rho_z = 0.85;
     sigma_z = 0.56;
     sig = sqrt(1-rho_z.^2).*sigma_z;
-    mu = 0;
+    mu = 0.0;
 
-    Nz = 500;
+    Nz = 1000;
 
-    Markov_Chain_rouwenhorst = tauchen(Nz,rho_z,sig, mu,4.0)
+    Markov_Chain_rouwenhorst = tauchen(Nz,rho_z,sig, mu,6.0)
     lzg = Markov_Chain_rouwenhorst.state_values
     zg = exp.(lzg)
     ztran = Markov_Chain_rouwenhorst.p
@@ -62,32 +62,35 @@ plot!(xgrid=:none)
 if fig_save
     savefig("./figure/Z_effect_of_lambda.pdf")
 end
-plot!(lambda_vec,direct_effect_result.Z_vec, label = "Direct Effect",linewidth = 5,linestyle=:dash,legend= :topleft)
 
 
 plot(lambda_vec,ss_result.Z_vec, label = "Long-run Effect",linewidth = 0,legend=:topleft,color=default_colors[1],fillrange=minimum(direct_effect_result.Z_vec),fillalpha=1.0)
-plot!(lambda_vec,direct_effect_result.Z_vec, label = "Impact Effect",linewidth = 0,color=default_colors[2],fillrange=minimum(direct_effect_result.Z_vec),fillalpha=1.0)
+plot!(lambda_vec,direct_effect_result.Z_vec, label = "Short-run Effect",linewidth = 0,color=default_colors[2],fillrange=minimum(direct_effect_result.Z_vec),fillalpha=1.0)
 xlabel!("Borrowing constraint parameter, \$\\lambda\$")
 title!("Total Factor Productivity, Z")
 if fig_save
     savefig("./figure/Z_decomposition.pdf")
 end
 
+ymin = 0;
+ymax = 0.013;
 
 plot(param.zg,ss_result.omega_vec[:,1],linewidth=5,label="Wealth distribution, \$\\omega(z)\$")
 plot!(param.zg,ss_result.kz_vec[:,1],linewidth=5,linestyle=:dash,label="Capital distribution, \$ k(z)\$")
 xlabel!("Productivity, z")
 title!("\$\\lambda\$ = $(lambda_vec[1])")
+ylims!(ymin,ymax)
 if fig_save
     savefig("./figure/autarky_wealth_capital_distribution.pdf")
 end
 
 
-ilambda = 3
+ilambda = 9
 plot(param.zg,ss_result.omega_vec[:,1],linewidth=5,label="Wealth distribution, \$\\omega(z)\$")
 plot!(param.zg,direct_effect_result.kz_vec[:,ilambda],linewidth=5,linestyle=:dash,label="Capital distribution, \$ k(z)\$")
 xlabel!("Productivity, z")
 title!("\$\\lambda\$ = $(lambda_vec[ilambda])")
+ylims!(ymin,ymax)
 if fig_save
     savefig("./figure/autarky_wealth_capital_distribution_lambda_$(lambda_vec[ilambda]).pdf")
 end
@@ -98,6 +101,7 @@ plot!(param.zg,direct_effect_result.kz_vec[:,ilambda],linewidth=5,linestyle=:das
 plot!(param.zg,ss_result.omega_vec[:,ilambda],linewidth=5,label="Wealth distribution, \$\\omega(z)\$",color=default_colors[1])
 xlabel!("Productivity, z")
 title!("\$\\lambda\$ = $(lambda_vec[ilambda])")
+ylims!(ymin,ymax)
 if fig_save
     savefig("./figure/long_run_wealth_distribution_lambda_$(lambda_vec[ilambda]).pdf")
 end
