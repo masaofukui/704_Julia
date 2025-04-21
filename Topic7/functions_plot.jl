@@ -102,11 +102,17 @@ function plot_distribution(param, Bellman_result, ss_distribution; fig_save = 0,
 end
 
 
-function plot_distribution_compare(param, Bellman_list, ss_distribution_list,phi_vec; fig_save = 0, fig_name = "")
+function plot_distribution_compare(param, Bellman_list, ss_distribution_list,var_input_vec; 
+    fig_save = 0, fig_name = "", var_change = "phi")
     @unpack ag, Ny, Na = param
     @unpack c_pol = Bellman_result
-    ag_plot1 = ag .- phi_vec[1];
-    ag_plot2 = ag .- phi_vec[2];
+    if var_change == "phi"
+        ag_plot1 = ag .- var_input_vec[1];
+        ag_plot2 = ag .- var_input_vec[2];
+    else
+        ag_plot1 = ag .- param.phi;
+        ag_plot2 = ag .- param.phi;
+    end
 
     c_pol1 = Bellman_list[1].c_pol;
     c_pol2 = Bellman_list[2].c_pol;

@@ -13,10 +13,11 @@ include("functions_distribution_iteration.jl")
 include("functions_ssj.jl")
 include("functions_plot.jl")
 include("functions_simulation.jl")
+include("functions_GE_steady_state.jl")
 fig_save = 1
 default_colors = palette(:auto);
 
-function set_parameters(;beta = nothing, phi = 2.0, transform_phi = false)
+function set_parameters(;r = nothing, beta = nothing, phi = 2.0, transform_phi = false, Y = 1.0)
     # income process
     yg = [0.4; 1.0];
     Ny = length(yg);
@@ -62,21 +63,24 @@ function set_parameters(;beta = nothing, phi = 2.0, transform_phi = false)
         T,
         dx, 
         phi = phi,
+        r = r,
+        Y = Y,
     )
 end
 
-param = set_parameters(transform_phi = true, phi=2.0)
-
-
 fig_save = 1
-
 beta = 0.978
 r = 0.02;
+param = set_parameters(r=r,beta=beta,transform_phi = true, phi=2.0)
 param_changed = 
-    (beta = beta, 
+    (beta = param.beta, 
     r = r, 
-    phi = param.phi)
+    phi = param.phi,
+    Y = param.Y)
 
+########################################################
+# Baseline results
+########################################################
 fig_name = "beta_"*string(beta)*"_r_"*string(r);
 wrapper_PE_policy_plot(param,param_changed,fig_name = fig_name,fig_save = fig_save)
 Bellman_result = solve_policy_EGM(param, param_changed)
@@ -86,63 +90,64 @@ ss_distribution = solve_ss_distribution(param,Bellman_result)
 plot_distribution(param, Bellman_result, ss_distribution,fig_save = fig_save, fig_name = fig_name)
 
 
-
-Bellman_list = Dict{Int8,Any}()
-ss_distribution_list = Dict{Int8,Any}()
+########################################################
+# Comparative Statics w.r.t. phi
+########################################################
 phi_vec = [2.0, 1.5]
-for (i,phi) in enumerate(phi_vec)
-    param_changed = 
-        (beta = beta, 
-        r = r, 
-        phi = phi)
-    Bellman_result = solve_policy_EGM(param, param_changed)
-    Bellman_list[i] = Bellman_result
-    ss_distribution = solve_ss_distribution(param,Bellman_result)
-    ss_distribution_list[i] = ss_distribution
-end
-
+A_vec, Bellman_list, ss_distribution_list = compute_asset_demand_vec(param,phi_vec,var_change = "phi")
 plot_distribution_compare(param, Bellman_list, ss_distribution_list,phi_vec,fig_save = fig_save,fig_name = "phi")
 
 
-Bellman_list = Dict{Int8,Any}()
-ss_distribution_list = Dict{Int8,Any}()
-r_vec = [0.02 0.021]
-phi_vec = param.phi*ones(length(r_vec))
-C_vec = zeros(length(r_vec))
-A_vec = zeros(length(r_vec))
-excess_demand = zeros(length(r_vec))
-for (i,r) in enumerate(r_vec)
-    param_changed = 
-        (beta = beta, 
-        r = r, 
-        phi = param.phi)
-    Bellman_result = solve_policy_EGM(param, param_changed)
-    Bellman_list[i] = Bellman_result
-    ss_distribution = solve_ss_distribution(param,Bellman_result)
-    ss_distribution_list[i] = ss_distribution
-    C_vec[i] = sum(ss_distribution.*Bellman_result.c_pol)
-    ag_phi = ag .- param.phi;
-    A_vec[i] = sum(ss_distribution.*ag_phi)
-
-    excess_demand[i] = r*A_vec[i] + Y - C_vec[i]
-end
+########################################################
+# Comparative Statics w.r.t. r
+########################################################
+r_vec = [0.02; 0.021]
+A_vec, Bellman_list, ss_distribution_list = compute_asset_demand_vec(param,r_vec,var_change = "r")
 plot_distribution_compare(param, Bellman_list, ss_distribution_list,phi_vec,fig_save = fig_save,fig_name = "r")
 
+########################################################
+# Comparative Statics w.r.t. Y
+########################################################
+Y_vec = [1.0; 1.1]
+A_vec, Bellman_list, ss_distribution_list = compute_asset_demand_vec(param,Y_vec,var_change = "Y")
+plot_distribution_compare(param, Bellman_list, ss_distribution_list,Y_vec,fig_save = fig_save,fig_name = "Y",var_change = "Y")
 
-plot(r_vec,C_vec,
-    lw=5,
-    label="Consumption",
-    xlabel="Interest rate",
-    ylabel="Consumption",
-    title="Consumption as a function of interest rate")
-plot!(r_vec,Y*ones(length(r_vec)))
+########################################################
+# Plot the Asset Demand Function
+########################################################
+beta = 0.97
+r = 0.02;
+phi = 0.8
+param = set_parameters(r=r,beta=beta,transform_phi = true, phi=phi)
+
+r_vec = range(0.0,1/param.beta-1 - 1e-4,length=40)
+A_vec, Bellman_list, ss_distribution_list = compute_asset_demand_vec(param,r_vec,var_change = "r")
+A_supply = zeros(length(r_vec))
 plot(r_vec,A_vec,
     lw=5,
-    label="Asset",
-    xlabel="Interest rate",
-    ylabel="Asset",
-    title="Asset as a function of interest rate")
-plot_distribution_compare(param, Bellman_list, ss_distribution_list,phi_vec,fig_save = fig_save)
+    label="Asset Demand, \$A(r)\$",
+    xlabel="Interest rate, \$r\$"
+)
+plot!(r_vec,A_supply,
+    lw=5,
+    label="Asset Supply",
+    linestyle=:dash
+)
+
+
+
+########################################################
+# Calibrate beta
+########################################################
+r_target = 0.02
+phi = 0.8
+beta_calibrated = calibrate_beta(param,r_target)
+param_calibrated = set_parameters(r=r_target,beta=beta_calibrated,transform_phi = true, phi=phi)
+
+########################################################
+# Steady State Counterfactual
+########################################################
+@time compute_r(param_calibrated)
 
 #trying out the functions 
 c_ss, a_ss, ss_distribution = get_ss_objects(param, beta, r)
