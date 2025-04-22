@@ -15,18 +15,21 @@ include("functions_plot.jl")
 include("functions_simulation.jl")
 include("functions_GE_steady_state.jl")
 include("functions_GE_transitions.jl")
+include("functions_iMPC.jl")
 fig_save = 1
 default_colors = palette(:auto);
 fig_dir = "./figure/Topic7/"
 
-function set_parameters(;r = nothing, beta = nothing, phi = 2.0, transform_phi = false, Y = 1.0,a_range=5.0)
+function set_parameters(;r = nothing, beta = nothing, phi = 2.0, transform_phi = false, Y = 1.0,a_range=5.0,higher_risk = false)
     # income process
     yg = [0.4; 1.0];
     Ny = length(yg);
     job_finding = 1-exp(-0.4*3);
     job_losing = 1-exp(-0.02*3);
-    job_finding = 0.5;
-    job_losing = 0.2;
+    if higher_risk
+        job_finding = 0.5;
+        job_losing = 0.2;
+    end
     ytran = [1-job_finding job_finding ; job_losing 1-job_losing ];
     
     # make sure ytran is a transition matrix
@@ -215,7 +218,7 @@ end
 ########################################################
 # Permanent shock to phi using Sequence Space Jacobian
 ########################################################
-#Old Steady State
+dphi_shock = 0.4
 get_IRF_permanent_shock_flexible_r(param_calibrated,dphi_shock)
 get_IRF_permanent_shock_rigid_r(param_calibrated,dphi_shock)
 
@@ -231,67 +234,5 @@ J_y = get_iMPC(r_target,phi,a_range)
 phi = 1.0
 a_range = 5.0;
 J_y_loose_phi = get_iMPC(r_target,phi,a_range)
-Tplot = 6
-plt_iMPC = plot(0:(Tplot-1),J_y[1:Tplot,1],
-    lw=5,
-    xlabel="Year",
-    title= "Marginal Propensity to Consume",
-    label = "Tight Borrowing Limit"
-)
 
-
-
-
-# Data
-years = 0:5
-fagereng = [0.51, 0.18, 0.11, 0.06, 0.03, 0.04]
-ci_lower = [0.44, 0.13, 0.08, 0.03, 0.01, 0.02]
-ci_upper = [0.58, 0.22, 0.14, 0.09, 0.06, 0.08]
-shiw = [0.45, 0.14, 0.07, 0.04, 0.025, 0.015]
-
-# Error bars
-yerr_lower = fagereng .- ci_lower
-yerr_upper = ci_upper .- fagereng
-
-# Create plot
-plot!(
-    years, fagereng;
-    yerror = (yerr_lower, yerr_upper),
-    label = "Data from Fagereng et al. (2021)",
-    seriestype = :scatter,
-    marker = (:circle, 6),
-    line = (:solid, :black),
-    color = :black,
-    legend = :topright,
-    xlabel = "Year"
-    #ylabel = "Marginal Propensity to Consume"
-)
-plot!(size = (700, 450))
-
-if fig_save == 1
-    savefig(plt_iMPC, fig_dir*"iMPC_tight_phi.pdf")
-end 
-
-
-# Add dotted zero line
-#hline!([0]; linestyle = :dot, color = :gray, label = "")
-
-# Adjust plot style
-
-
-plot!(0:(Tplot-1),J_y_loose_phi[1:Tplot,1],
-    lw=5,
-    label = "Loose Borrowing Limit",
-    ls = :dash
-)
-if fig_save == 1
-    savefig(plt_iMPC, fig_dir*"iMPC_loose_phi.pdf")
-end
-plot!(0:(Tplot-1),ones(Tplot).*(1.0 .- 1/(1+r_target)),
-    lw=5,
-    label = "Complete Market",
-    ls = :dot
-)
-if fig_save == 1
-    savefig(plt_iMPC, fig_dir*"iMPC_complete_market.pdf")
-end
+plot_iMPC(param,J_y,J_y_loose_phi)  
