@@ -12,7 +12,7 @@ The course covers the labor market and the financial market frictions.
 
 
 * Topic 6: Financial Friction and Capital Misallocation
-  * [Toplevel.jl](./Topic6/Toplevel.jl): Top-level code to solve the steady state and the transition dynamics of the discrete-time version of [Moll (2014)](https://benjaminmoll.com/wp-content/uploads/2019/07/TFPFF.pdf).
+  * [Toplevel.jl](./Topic6/Toplevel.jl): Top-level code to solve the steady state and the transition dynamics of the discrete-time, AK model version of [Moll (2014)](https://benjaminmoll.com/wp-content/uploads/2019/07/TFPFF.pdf).
 
 * Topic 7: Canonical Incomplete Market Models (co-written with Aruzhan Nurlankul)
   * [Toplevel.jl](./Topic7/Toplevel.jl): Top-level code to solve the steady state and the transition dynamics of Bewley-Hugget-Aiyagari model. Transition dynamics is obtained by sequence space Jacobian method by [Auclret, Bardóczy, Rognlie, and Straub (2021)](https://web.stanford.edu/~aauclert/sequence_space_jacobian.pdf).
