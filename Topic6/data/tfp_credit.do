@@ -61,7 +61,7 @@ tw ( scatter cwtfp hh_gdp if year == 2014 & total_gdp!=., mlabel(countrycode) ) 
 	if hh_gdp <= 3, legend(position(6)) name(tfp,replace)
 
 
-use "/Users/fukui/Dropbox (Personal)/FTY_Forward_Guidance_Puzzle/data/Jorda_dataset/JSTdatasetR6.dta",clear
+use "./original_data/JSTdatasetR6.dta",clear
 rename iso countrycode 
 gen tloan_gdp = tloan/gdp
 gen thh_gdp = thh/gdp

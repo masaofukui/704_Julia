@@ -5,11 +5,9 @@ function wrapper_PE_policy_plot(param,param_changed; fig_save = 0, fig_name = ""
         println("beta*(1+r) >= 1")
     end
     @assert param.amin - phi > - minimum(param.yg)./r || r <= 0
-    Bellman_result = solve_policy_EGM(param, param_changed)
+    Bellman_result = solve_policy_EGM(param, param_changed = param_changed)
     p_pol = plot_policy_functions(param, Bellman_result,param_changed;a_idx=1:50)
-    if fig_save == 1
-        savefig(p_pol, "./figure/policy_functions_"*fig_name*".pdf")
-    end
+    
     return p_pol
 end
 
@@ -19,8 +17,8 @@ function plot_policy_functions(param, Bellman_result,param_changed;a_idx=1:param
     @unpack phi = param_changed
     ag_plot = ag .- phi;
     # Set the default font to Computer Modern
-    default()
-    default(fontfamily="Computer Modern")
+    default(fontfamily="Computer Modern",
+    xgrid = :none)
 
     p_c = plot(ag_plot[a_idx], c_pol[a_idx,[2,1]], 
         lw=5,
@@ -43,6 +41,27 @@ function plot_policy_functions(param, Bellman_result,param_changed;a_idx=1:param
 
     p_pol = plot(p_c, p_a, layout=(1,2), size=(900, 500))
     display(p_pol)
+    if fig_save == 1
+        savefig(p_pol, fig_dir*"policy_functions_"*fig_name*".pdf")
+    end
+
+
+    p_a_only = plot(ag_plot[a_idx], a_pol[a_idx,1] .-phi, 
+    lw=5,
+    label="low income",
+    linestyle=:dash,
+    color=default_colors[2])
+    plot!(ag_plot[a_idx], ag_plot[a_idx], 
+        lw=2,
+        label="45 degree line",
+        linestyle=:dash,
+        color=:grey)
+    title!(L"Asset Policy Functions, $a'(a,y)$")
+    xlabel!(L"Asset, $a$")
+
+    if fig_save == 1
+        savefig(p_a_only, fig_dir*"policy_functions_a_only_"*fig_name*".pdf")
+    end
 
     return p_pol
 end
@@ -96,7 +115,7 @@ function plot_distribution(param, Bellman_result, ss_distribution; fig_save = 0,
 
     p_all = plot(p2,p1,layout = (2,1),size = (1000,700))
     if fig_save == 1
-        savefig(p_all, "./figure/distribution_"*fig_name*".pdf")
+        savefig(p_all, fig_dir*"distribution_"*fig_name*".pdf")
     end
     return p_all
 end
@@ -184,10 +203,52 @@ function plot_distribution_compare(param, Bellman_list, ss_distribution_list,var
 
     p_all = plot(p2,p1,layout = (2,1),size = (1000,700))
     if fig_save == 1
-        savefig(p_all, "./figure/compare_distribution_"*fig_name*".pdf")
+        savefig(p_all, fig_dir*"compare_distribution_"*fig_name*".pdf")
     end
     return p_all
 
 end
 
 
+
+function plot_asset_demand_function(param, r_vec, A_vec; compare = false, A_vec_old = nothing)
+    A_supply = zeros(length(r_vec))
+    plt_asset = plot(r_vec,A_vec,
+        lw=5,
+        label="Asset Demand, \$A(r)\$",
+        xlabel="Interest rate, \$r\$",
+        color=default_colors[1]
+    )
+    if compare
+        plot!(r_vec,A_vec_old,
+            lw=5,
+            label=:none,
+            color=default_colors[1],
+            alpha = 0.2
+        )
+    end
+    plot!(r_vec,A_supply,
+        lw=5,
+        label="Asset Supply",
+        color=default_colors[2],
+        linestyle=:dash
+    )
+    vline!([1/param.beta-1], 
+        label=:none,
+        lw=3,
+        linestyle=:dot,
+        color=default_colors[3]
+    )
+    if !compare
+        annotate!([(1/param.beta-1, minimum(A_vec)+0.02, 
+            text("\$1/\\beta - 1\$", :black, :right, 10))])
+    end
+    display(plt_asset)
+    if fig_save == 1
+        if compare
+            savefig(plt_asset, fig_dir*"asset_demand_function_compare.pdf")
+        else
+            savefig(plt_asset, fig_dir*"asset_demand_function.pdf")
+        end
+    end
+end
