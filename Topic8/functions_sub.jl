@@ -26,6 +26,13 @@ function compute_index_ia_iy(param,ia,iy)
     return ia + (iy-1)*Na
 end
 
+function compute_index_ia_iy_iz(param,ia,iy,iz)
+    @unpack Na, Ny, Nz = param
+    @assert 1 <= ia <= Na
+    @assert 1 <= iy <= Ny
+    @assert 1 <= iz <= Nz
+    return ia + (iy-1)*Na + (iz-1)*Na*Ny
+end
 
 function find_nearest_grid(agrid,a)
     a_min = minimum(agrid)

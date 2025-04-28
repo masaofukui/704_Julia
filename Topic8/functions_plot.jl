@@ -293,3 +293,30 @@ function plot_power_law(param,dist_a,ag; fig_save = 0, fig_name = "",title_label
 
     return plt_power_law
 end
+
+function plot_power_law_wrapper(param,Bellman_result,ss_distribution; fig_save = 0, fig_name = "")
+    @unpack ag,yg = param
+    @unpack c_pol = Bellman_result
+
+    dist_a = vec(sum(ss_distribution,dims=[2,3]))
+    findlast(dist_a .> 0.0001)
+    dist_y = vec(sum(ss_distribution,dims=[1,3]))
+
+
+    plt_a = plot_power_law(param,dist_a,ag,title_label = "Wealth",low_q = 0.1,high_q = 0.001)
+    plt_y = plot_power_law(param,dist_y,yg,title_label = "Labor Income",low_q = 0.1,high_q = 0.001)
+    plt_r = plot_power_law(param,dist_a,r.*ag,title_label = "Capital Income",low_q = 0.1,high_q = 0.001)
+
+    lc = range(minimum(log.(c_pol)),maximum(log.(c_pol)),length=Na*2)
+    c_vec = exp.(lc)
+
+    dist_c = get_distc(param,Bellman_result,ss_distribution,c_vec)
+    plt_c = plot_power_law(param,dist_c,c_vec,title_label = "Consumption",low_q = 0.1,high_q = 0.001)
+
+    plt_all = plot(plt_y,plt_a,plt_r,plt_c,layout = (2,2),size = (1200,800))
+    plot!(margin = 6mm)
+    if fig_save == 1
+        savefig(plt_all, fig_dir*fig_name*".pdf")
+    end
+    display(plt_all)
+end

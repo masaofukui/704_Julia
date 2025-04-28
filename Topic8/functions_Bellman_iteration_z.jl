@@ -1,9 +1,9 @@
 
 
 function solve_policy_EGM_z(param, beta, r)
-    @unpack Na, Ny,tol = param
-    c_pol_old = ones(Na,Ny)
-    c_pol_new = 100*ones(Na,Ny)
+    @unpack Na, Ny,tol,Nz = param
+    c_pol_old = ones(Na,Ny,Nz)
+    c_pol_new = 100*ones(Na,Ny,Nz)
     a_pol_new = []
     iter = 0;
     while maximum(abs.(c_pol_new .- c_pol_old)) > tol
@@ -20,10 +20,10 @@ end
 
 
 function Euler_iteration_once_z(param,c_pol_old, beta, r)
-    @unpack Na, Ny, ag, yg,ytran,amin,zg,z_probs = param
+    @unpack Na, Ny, ag, yg,ytran,amin,zg,z_probs,Nz = param
 
     uprime_future = uprime_fun(param,c_pol_old)
-    a_today_unconstrained = zeros(eltype(uprime_future),Na,Ny) .+ zeros(eltype(r),1)
+    a_today_unconstrained = zeros(eltype(uprime_future),Na,Ny,Nz) .+ zeros(eltype(r),1)
 
     for (ia,a_future) in enumerate(ag)
         Euler_RHS = zeros(eltype(uprime_future),Ny)
@@ -37,8 +37,8 @@ function Euler_iteration_once_z(param,c_pol_old, beta, r)
         end
     end
 
-    a_pol_new = zeros(eltype(a_today_unconstrained),Na,Ny)
-    c_pol_new = zeros(eltype(a_today_unconstrained),Na,Ny)
+    a_pol_new = zeros(eltype(a_today_unconstrained),Na,Ny,Nz)
+    c_pol_new = zeros(eltype(a_today_unconstrained),Na,Ny,Nz)
     for (iy,y_today) in enumerate(yg)
         for (iz_today,z_today) in enumerate(zg)
             ainterp = LinearInterpolation(a_today_unconstrained[:,iy,iz_today],ag, extrapolation_bc=Interpolations.Flat())
