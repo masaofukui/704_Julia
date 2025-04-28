@@ -10,7 +10,7 @@ using ForwardDiff
 using Distributions
 using Plots.Measures
 include("functions_sub.jl")
-include("functions_Bellman_iteration_transorm_phi.jl")
+include("functions_Bellman_iteration_z.jl")
 include("functions_distribution_iteration.jl") 
 include("functions_plot.jl")
 fig_save = 1
@@ -104,7 +104,7 @@ param_changed =
 # Baseline results
 ########################################################
 fig_name = "beta_"*string(beta)*"_r_"*string(r);
-Bellman_result = solve_policy_EGM(param, param_changed = param_changed)
+Bellman_result = solve_policy_EGM_z(param, beta,r)
 ss_distribution = solve_ss_distribution(param,Bellman_result)
 
 plot_distribution(param, Bellman_result, ss_distribution,fig_save = fig_save, fig_name = fig_name)

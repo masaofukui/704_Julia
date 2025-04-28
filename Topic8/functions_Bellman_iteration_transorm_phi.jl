@@ -9,12 +9,10 @@ function solve_policy_EGM(param; param_changed = nothing)
     if isnothing(param_changed)
         beta = param.beta
         r = param.r
-        phi = param.phi
         Y = param.Y
     else
         beta = param_changed.beta
         r = param_changed.r
-        phi = param_changed.phi
         Y = param_changed.Y
     end
     while maximum(abs.(c_pol_new .- c_pol_old)) > tol
@@ -32,11 +30,12 @@ end
 
 
 function Euler_iteration_once(param,c_pol_old, beta,r,Y)
-    @unpack Na, Ny, ag, yg,ytran,amin,zg,z_probs = param
+    @unpack Na, Ny, ag, yg,ytran,amin,zg,z_probs,amax = param
 
     x_today_unconstrained = zeros(eltype(c_pol_old),Na,Ny) .+ zeros(eltype(r),1) .+ zeros(eltype(r),1)
 
-    for (ia,a_future) in enumerate(ag)
+    ag_temp = copy(ag)./(1.0 .+ r)
+    for (ia,a_future) in enumerate(ag_temp)
         Euler_RHS = zeros(eltype(c_pol_old),Ny)
         for (iy,y) in enumerate(yg)
             c_interp = LinearInterpolation(ag,c_pol_old[:,iy], extrapolation_bc=Interpolations.Flat())
@@ -53,7 +52,7 @@ function Euler_iteration_once(param,c_pol_old, beta,r,Y)
     a_pol_new = zeros(eltype(x_today_unconstrained),Na,Ny)
     c_pol_new = zeros(eltype(x_today_unconstrained),Na,Ny)
     for (iy,y_today) in enumerate(yg)
-        ainterp = LinearInterpolation(x_today_unconstrained[:,iy],ag, extrapolation_bc=Interpolations.Flat())
+        ainterp = LinearInterpolation(x_today_unconstrained[:,iy],ag_temp, extrapolation_bc=Interpolations.Linear())
         a_pol_new[:,iy] = ainterp.(ag)
         a_pol_new[a_pol_new[:,iy] .< amin,iy] .= amin
         c_pol_new[:,iy] = ag .+ y_today.*Y .- a_pol_new[:,iy]
