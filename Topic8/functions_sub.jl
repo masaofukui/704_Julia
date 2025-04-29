@@ -64,11 +64,18 @@ function find_nearest_grid(agrid,a)
 end
 function get_distc(param,Bellman_result,ss_distribution,c_vec)
     @unpack c_pol = Bellman_result
-    dist_c = zeros(length(c_vec))
+    dist_c = zeros(length(c_vec)+1)
     for (ic,c) in enumerate(c_vec)
-        idx_c = c_pol .< c
+        idx_c = c_pol .<= c
         dist_c[ic] = sum(ss_distribution[idx_c])
     end
+    dist_c[end] = sum(ss_distribution)
     dist_c = dist_c./dist_c[end]
+    dist_c = diff(dist_c)
     return dist_c
+end
+
+function marignal_utility_wealth(param,a)
+    @unpack nu,kappa = param
+    return kappa.*a.^(-nu);
 end

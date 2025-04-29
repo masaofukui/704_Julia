@@ -20,7 +20,7 @@ end
 
 
 function Euler_iteration_once_z(param,c_pol_old, beta, r)
-    @unpack Na, Ny, ag, yg,ytran,amin,zg,z_probs,Nz = param
+    @unpack Na, Ny, ag, yg,ytran,amin,zg,z_probs,Nz,eta,psi,death_prob = param
 
     uprime_future = uprime_fun(param,c_pol_old)
     a_today_unconstrained = zeros(eltype(uprime_future),Na,Ny,Nz) .+ zeros(eltype(r),1)
@@ -29,8 +29,9 @@ function Euler_iteration_once_z(param,c_pol_old, beta, r)
         Euler_RHS = zeros(eltype(uprime_future),Ny)
         for (iz,z) in enumerate(zg) 
             uprime_future_y =  uprime_future[ia,:,iz]
-            Euler_RHS += z_probs[iz].*beta.*(1.0 .+r.*z).*(ytran*uprime_future_y)
+            Euler_RHS += z_probs[iz].*beta.*(1-death_prob).*(1.0 .+r.*z.*psi.*a_future.^eta.*(1 .+eta)).*(ytran*uprime_future_y)
         end
+        Euler_RHS = Euler_RHS .+  marignal_utility_wealth(param,a_future)
         c_today_unconstrained = uprime_inv_fun(param,Euler_RHS)
         for (iz_today,z_today) in enumerate(zg)
             a_today_unconstrained[ia,:,iz_today] =  (c_today_unconstrained .+ a_future .- yg)./(1.0 .+r.*z_today) 
