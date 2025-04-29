@@ -17,4 +17,8 @@ The course covers the labor market and the financial market frictions.
 * Topic 7: Canonical Incomplete Market Models (co-written with Aruzhan Nurlankul)
   * [Toplevel.jl](./Topic7/Toplevel.jl): Top-level code to solve the steady state and the transition dynamics of Bewley-Hugget-Aiyagari model. Transition dynamics is obtained by sequence space Jacobian method by [Auclret, Bardóczy, Rognlie, and Straub (2021)](https://web.stanford.edu/~aauclert/sequence_space_jacobian.pdf).
 
+* Topic 8: Consumption, Wealth, and Income Inequality
+ * [Toplevel.jl](./Topic8/Toplevel.jl): Discrete-time and stripped version of [Gaillard, Hellwig, Wagner, and Werquin (2024)](https://www.tse-fr.eu/sites/default/files/TSE/documents/doc/wp/2023/wp_tse_1493.pdf)
+
+
 
