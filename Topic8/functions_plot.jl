@@ -58,7 +58,7 @@ function plot_power_law_wrapper(param,Bellman_result,ss_distribution; fig_save =
     plt_c = plot_power_law(param,dist_c,c_vec,title_label = "Consumption",low_q = 0.1,high_q = 0.0001)
 
     plt_all = plot(plt_y,plt_a,plt_r,plt_c,layout = (2,2),size = (1200,800))
-    plot!(margin = 6mm)
+    plot!(margin = 4mm)
     if fig_save == 1
         savefig(plt_all, fig_dir*fig_name*".pdf")
     end

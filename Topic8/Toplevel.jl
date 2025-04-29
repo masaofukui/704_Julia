@@ -138,7 +138,11 @@ plot_power_law_wrapper(param,Bellman_result,ss_distribution,fig_save = fig_save,
 
 param = set_parameters(r=r,beta=beta, phi=0.0,return_heterogeneity = true)
 Bellman_result = solve_policy_EGM_z(param, beta,r)
-plot(param.ag,Bellman_result.c_pol[:,:,1],label=:none)
+plot(param.ag,Bellman_result.c_pol[:,1,1],label=:none,lw=6)
+xlabel!("Wealth, \$a\$")
+title!("Consumption Policy Function")
+savefig(fig_dir*"linear_c_pol.pdf")
+
 ss_distribution = solve_ss_distribution(param,Bellman_result)
 plot(log.(param.ag),(vec(sum(ss_distribution,dims=[2,3]))),label="distribution")
 
@@ -152,8 +156,17 @@ beta = 0.3
 r = 0.02;
 param = set_parameters(r=r,beta=beta, phi=0.0,return_heterogeneity = true,nonhomothetic = true,scale_dependent = true)
 Bellman_result = solve_policy_EGM_z(param, beta,r)
-plot(param.ag,Bellman_result.c_pol[:,:,1],label=:none)
+plot(param.ag,Bellman_result.c_pol[:,1,1],label=:none,lw=6)
+xlabel!("Wealth, \$a\$")
+title!("Consumption Policy Function")
+savefig(fig_dir*"concave_c_pol.pdf")
 
 ss_distribution = solve_ss_distribution(param,Bellman_result)
 plot(log.(param.ag),(vec(sum(ss_distribution,dims=[2,3]))),label="distribution")
 plot_power_law_wrapper(param,Bellman_result,ss_distribution,fig_save = fig_save, fig_name = "return_heterogeneity_nonhomothetic_scale_dependent")
+
+
+plot(param.ag,1e-10*param.ag.^(1+param.eta),label=:none,lw=6)
+xlabel!("Wealth, \$a\$")
+title!("Capital Income")
+savefig(fig_dir*"concave_c_pol.pdf")
