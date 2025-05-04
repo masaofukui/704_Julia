@@ -141,6 +141,7 @@ plt_K = plot(omega_vec,K_vec_omega,
     ylabel = "Capital",
     title = "Capital"
 )
+ylims!(K_vec_omega[1]-0.05,K_vec_omega[end]+0.05)
 plt_w = plot(omega_vec,w_vec_omega,
     lw = 5,
     xlabel = "Permanent Income Inequality, \$ \\omega \$",
@@ -148,6 +149,7 @@ plt_w = plot(omega_vec,w_vec_omega,
     ylabel = "Wage",
     title = "Wage"
 )
+ylims!(w_vec_omega[1]-0.05,w_vec_omega[end]+0.05)
 plt_r = plot(omega_vec,r_vec_omega,
     lw = 5,
     xlabel = "Permanent Income Inequality, \$ \\omega \$",
@@ -155,7 +157,7 @@ plt_r = plot(omega_vec,r_vec_omega,
     ylabel = "Interest Rate",
     title = "Interest Rate"
 )
-
+ylims!(r_vec_omega[1]-0.05,r_vec_omega[end]+0.05)
 plt_all_omega = plot(plt_K,plt_w,plt_r,layout=(1,3),size=(1500,400))
 plot!(margin=5mm)
 
