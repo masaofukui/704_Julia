@@ -7,7 +7,7 @@ mc = QuantEcon.rouwenhorst(3,rho,sqrt(1-rho^2)*sig,mu)
 eg = exp.(mc.state_values)
 ss_e = stationary_distributions(mc)[1]
 
-sum(eg.*ss_e)
+sum(yg.*ss_e)
 
 
 
