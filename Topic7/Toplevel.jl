@@ -16,7 +16,7 @@ include("functions_simulation.jl")
 include("functions_GE_steady_state.jl")
 include("functions_GE_transitions.jl")
 include("functions_iMPC.jl")
-fig_save = 1
+fig_save = 0
 default_colors = palette(:auto);
 fig_dir = "./figure/Topic7/"
 
@@ -75,7 +75,6 @@ function set_parameters(;r = nothing, beta = nothing, phi = 2.0, transform_phi =
     )
 end
 
-fig_save = 1
 beta = 0.978
 r = 0.02;
 param = set_parameters(r=r,beta=beta,transform_phi = true, phi=2.0)
