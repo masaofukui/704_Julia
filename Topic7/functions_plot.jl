@@ -211,7 +211,7 @@ end
 
 
 
-function plot_asset_demand_function(param, r_vec, A_vec; compare = false, A_vec_old = nothing)
+function plot_asset_demand_function(param, r_vec, A_vec; compare = false, A_vec_old = nothing, fig_name = "")
     A_supply = zeros(length(r_vec))
     plt_asset = plot(r_vec,A_vec,
         lw=5,
@@ -246,7 +246,7 @@ function plot_asset_demand_function(param, r_vec, A_vec; compare = false, A_vec_
     display(plt_asset)
     if fig_save == 1
         if compare
-            savefig(plt_asset, fig_dir*"asset_demand_function_compare.pdf")
+            savefig(plt_asset, fig_dir*"asset_demand_function_compare"*string(fig_name)*".pdf")
         else
             savefig(plt_asset, fig_dir*"asset_demand_function.pdf")
         end

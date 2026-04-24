@@ -136,6 +136,8 @@ r_vec_new = range(0.0,1/param_new.beta-1 - 1e-4,length=40)
 A_vec_new, Bellman_list_new, ss_distribution_list_new = compute_asset_demand_vec(param_new,r_vec_new,var_change = "r")
 plot_asset_demand_function(param, r_vec, A_vec_new; A_vec_old = A_vec,compare = true)
 
+plot_asset_demand_function(param, r_vec, A_vec; A_vec_old = A_vec_new,compare = true,fig_name = "_Y")
+
 ########################################################
 # Calibrate beta
 ########################################################
